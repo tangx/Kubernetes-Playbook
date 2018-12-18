@@ -5,10 +5,11 @@
     src: '{{ item }}'
     dest: /usr/local/src/kubernetes/kubedns/
   with_items:
-    - kubedns/kubedns-cm.yaml
-    - kubedns/kubedns-sa.yaml
-    - kubedns/kubedns-svc.yaml 
-    - kubedns/kubedns-controller.yaml
+    - kubedns/kube-dns.yaml
+    # - kubedns/kubedns-cm.yaml
+    # - kubedns/kubedns-sa.yaml
+    # - kubedns/kubedns-svc.yaml 
+    # - kubedns/kubedns-controller.yaml
 
 - name: Create KubeDNS step 2/2
   command: "kubectl apply -f /usr/local/src/kubernetes/kubedns"
