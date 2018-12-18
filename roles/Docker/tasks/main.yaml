@@ -1,0 +1,19 @@
+---
+- include_tasks: RedHat.yaml
+  when: ansible_os_family == 'RedHat'
+
+- include_tasks: Debian.yaml
+  when: ansible_os_family == 'Debian'
+
+- name: Create a Docker configuration directory
+  file: 
+    path: /etc/docker
+    state: directory
+    mode: 0644
+  notify: Restart Docker
+
+- name: Configuring Docker
+  copy:
+    src: daemon.json
+    dest: /etc/docker/daemon.json
+  notify: Restart Docker

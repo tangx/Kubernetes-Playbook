@@ -1,0 +1,23 @@
+---
+# 安装haproxy
+- name: Install Keepalived
+  package:
+    name: keepalived
+
+- name: Upload Keepalived check script
+  template:
+    src: check_haproxy.sh
+    dest: /etc/keepalived/check_haproxy.sh
+    mode: 755
+
+# 配置Haproxy
+- name: Configuring Keepalived
+  template:
+    src: keepalived.conf
+    dest: /etc/keepalived/keepalived.conf
+
+- name: Start Keepalived
+  systemd:
+    name: keepalived
+    enabled: yes
+    state: restarted

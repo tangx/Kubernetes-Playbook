@@ -1,0 +1,17 @@
+---
+# 安装haproxy
+- name: Install Haproxy
+  package:
+    name: haproxy
+
+# 配置Haproxy
+- name: Configuring Haproxy
+  template:
+    src: haproxy.cfg
+    dest: /etc/haproxy/haproxy.cfg
+
+- name: Start Haproxy
+  systemd:
+    name: haproxy
+    enabled: yes
+    state: restarted

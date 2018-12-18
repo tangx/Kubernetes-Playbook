@@ -1,0 +1,11 @@
+dashboard: registry.cn-hangzhou.aliyuncs.com/google_containers/kubernetes-dashboard-amd64:v1.10.0
+tiller: registry.cn-hangzhou.aliyuncs.com/google_containers/tiller:v2.11.0
+charts: https://kubernetes.oss-cn-hangzhou.aliyuncs.com/charts
+coredns: coredns/coredns:1.2.6
+nginxingresscontroller: quay.io/kubernetes-ingress-controller/nginx-ingress-controller:0.17.0
+defaultbackend: registry.cn-hangzhou.aliyuncs.com/google_containers/defaultbackend:1.4
+metricsserver: zhangguanzhang/gcr.io.google_containers.metrics-server-amd64:v0.3.1
+scope: docker.io/weaveworks/scope:1.10.1
+nfsclientprovisioner: quay.io/external_storage/nfs-client-provisioner:latest
+traefik: traefik:v1.7.5
+# metrics-server: gcr.io/google_containers/metrics-server-amd64:v0.3.1

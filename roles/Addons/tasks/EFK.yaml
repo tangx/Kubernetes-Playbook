@@ -1,0 +1,20 @@
+---
+# Calico
+- name: Create ELK step 1/2
+  template: 
+    src: '{{ item }}'
+    dest: /usr/local/src/kubernetes/elk/
+  with_items:
+    - efk/1.Namespace.yaml
+    - efk/2.ConfigMap.yml
+    - efk/3.PersistentVolumeClaim.yaml
+    - efk/4.kibana.yml
+    - efk/5.elasticsearch.yml
+    - efk/6.filebeat.yaml
+    # - elk/7.redis.yml
+    # - elk/logstash.yml
+
+- name: Create ELK step 2/2
+  command: "kubectl apply -f /usr/local/src/kubernetes/elk"
+  run_once: true
+  when: EFK == True

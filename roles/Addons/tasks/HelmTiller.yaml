@@ -1,0 +1,35 @@
+---
+# HelmTiller
+- name: Create HelmTiller step 1/6
+  package:
+    name: socat
+  # when: HelmTiller == True
+
+- name: Create HelmTiller step 2/6
+  copy: 
+    src: /usr/local/bin/helm
+    dest: /usr/local/bin/helm
+    mode: 755
+  # when: HelmTiller == True
+
+- name: Create HelmTiller step 3/6
+  copy: 
+    src: HelmTiller/helm.sh
+    dest: /etc/profile.d/helm.sh
+    mode: 755
+
+- name: Create HelmTiller step 4/6
+  copy:
+    src: HelmTiller
+    dest: /usr/local/src/kubernetes
+  # when: HelmTiller == True
+
+- name: Create HelmTiller step 5/6
+  command: kubectl apply -f /usr/local/src/kubernetes/HelmTiller/HelmTiller.yaml
+  run_once: true
+  when: HelmTiller == True
+
+- name: Create HelmTiller step 6/6
+  command: "helm init --service-account tiller -i {{ tiller }} --stable-repo-url {{ charts }}"
+  run_once: true
+  when: HelmTiller == True

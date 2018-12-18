@@ -1,0 +1,67 @@
+---
+# This Playbook Install and Config Etcd Server
+  - name: Install the Etcd binary
+    copy: 
+      src: '/usr/local/bin/{{ item }}'
+      dest: /usr/local/bin/
+      mode: 0744 
+      owner: root
+      group: root
+    with_items:
+      - etcd
+      - etcdctl
+
+  - name: Create a configuration directory and a data directory
+    file: 
+      path: '{{ item }}'
+      state: directory 
+      mode: 0644
+    with_items:
+      - /etc/etcd
+      - /var/lib/etcd
+      - /etc/etcd/ssl
+
+  # 创建配置文件
+  - name: Create a configuration file
+    template: 
+      src: etcd.yml.j2
+      dest: /etc/etcd/etcd.yml
+
+  # 拷贝证书
+  - name: Copy certificate
+    copy: 
+      src: '/etc/etcd/ssl/{{ item }}'
+      dest: /etc/etcd/ssl/
+      owner: root
+      group: root
+    with_items:
+      - etcd-key.pem
+      - etcd.pem
+      - etcd-ca.pem
+      - etcd-ca-key.pem
+  
+  # 创建Service文件
+  - name: Create a Service File
+    template: 
+      src: etcd.service.j2 
+      dest: /lib/systemd/system/etcd.service
+
+  # 启动服务
+  - name: Start service
+    systemd: 
+      name: etcd 
+      state: restarted 
+      enabled: yes 
+      daemon_reload: yes
+
+  - name: Wait for Etcd
+    wait_for:
+      port: 2379
+      delay: 15
+      state: started
+      host: '{{ ansible_ssh_host }}'
+
+  - name: Check Etcd Command
+    debug:
+      msg: etcdctl --endpoints {% for host in groups['etcd'] %}https://{{ host }}:2379{% if not loop.last %},{% endif %}{% endfor %} --ca-file=/etc/etcd/ssl/etcd-ca.pem --cert-file=/etc/etcd/ssl/etcd.pem  --key-file=/etc/etcd/ssl/etcd-key.pem cluster-health
+    run_once: true

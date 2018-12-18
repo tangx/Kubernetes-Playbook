@@ -1,0 +1,22 @@
+---
+- name: Distribute CNI binary file
+  copy: 
+    src: '/opt/cni/bin/{{ item }}'
+    dest: /opt/cni/bin/
+    mode: 0755
+    owner: root
+    group: root
+  with_items:
+    - bridge
+    - dhcp
+    - flannel
+    - host-device
+    - host-local
+    - ipvlan
+    - loopback
+    - macvlan
+    - portmap
+    - ptp
+    - sample
+    - tuning
+    - vlan

@@ -1,0 +1,131 @@
+---
+- name: Distribute Kube-Apiserver Configure file step 1
+  copy: 
+    src: /etc/kubernetes/pki/{{ item }}
+    dest: /etc/kubernetes/pki/
+    mode: 0644 
+    owner: root
+    group: root
+  with_items:
+    - apiserver-key.pem
+    - apiserver.pem
+    - ca.pem
+    - front-proxy-ca.pem
+    - sa.pub
+    - front-proxy-client.pem
+    - front-proxy-client-key.pem
+
+- name: Distribute Kube-Apiserver Configure file step 2
+  copy: 
+    src: /etc/kubernetes/{{ item }}
+    dest: /etc/kubernetes/
+    mode: 0644 
+    owner: root
+    group: root
+  with_items:
+    - audit-policy.yml
+    - encryption.yml
+    - admin.kubeconfig
+
+- name: Distribute Etcd certificate file
+  copy: 
+    src: '/etc/etcd/ssl/{{ item }}'
+    dest: /etc/kubernetes/pki/etcd/
+    mode: 0644 
+    owner: root
+    group: root
+  with_items:
+    - etcd-key.pem
+    - etcd.pem
+    - etcd-ca.pem
+    - etcd-ca-key.pem
+
+- name: Distribute the service file
+  template: 
+    src: kube-apiserver.service
+    dest: /etc/systemd/system
+
+- name: Force systemd to reread configs
+  systemd:
+    daemon_reload: yes
+
+- name: Start Kube-Apiserver
+  systemd: 
+    name: kube-apiserver
+    state: restarted
+    enabled: yes 
+    daemon_reload: yes
+
+- name: Wait Api Server
+  wait_for:
+    port: 6443
+    delay: 30
+    state: started
+    host: '{{ ansible_ssh_host }}'
+
+- name: Create .kube directory
+  file: 
+    path: /root/.kube
+    state: directory 
+    mode: 0655
+
+- name: Set admin kubeconfig
+  command: cp /etc/kubernetes/admin.kubeconfig ~/.kube/config
+
+- name: register TOKEN_ID
+  command: openssl rand 3 -hex
+  register: TOKEN_ID
+  run_once: true
+
+- name: register TOKEN_SECRET
+  command: openssl rand 8 -hex
+  register: TOKEN_SECRET
+  run_once: true
+
+- name: bootstrap set cluster
+  shell: "kubectl config set-cluster kubernetes --certificate-authority=/etc/kubernetes/pki/ca.pem --embed-certs=true --server={{ KUBE_APISERVER }} --kubeconfig=/etc/kubernetes/bootstrap-kubelet.kubeconfig"
+  run_once: true
+
+- name: bootstrap set credentials
+  shell: "kubectl config set-credentials tls-bootstrap-token-user --token={{ TOKEN_ID.stdout }}.{{ TOKEN_SECRET.stdout }} --kubeconfig=/etc/kubernetes/bootstrap-kubelet.kubeconfig"
+  run_once: true
+
+- name: bootstrap set context
+  shell: "kubectl config set-context tls-bootstrap-token-user@kubernetes --cluster=kubernetes --user=tls-bootstrap-token-user --kubeconfig=/etc/kubernetes/bootstrap-kubelet.kubeconfig"
+  run_once: true
+
+- name: bootstrap use default context
+  shell: "kubectl config use-context tls-bootstrap-token-user@kubernetes --kubeconfig=/etc/kubernetes/bootstrap-kubelet.kubeconfig"
+  run_once: true
+
+- name: Get bootstrap-kubelet.kubeconfig
+  fetch: 
+    src: /etc/kubernetes/bootstrap-kubelet.kubeconfig
+    dest: /etc/kubernetes/bootstrap-kubelet.kubeconfig
+    flat: yes
+  run_once: true
+
+- name: Distribute Orchestration
+  template: 
+    src: '{{ item }}'
+    dest: /usr/local/src/kubernetes
+  with_items:
+    - kubelet-bootstrap-rbac.yml
+    - bootstrap-token-Secret.yml
+    - apiserver-to-kubelet-rbac.yml
+    - kube-proxy.yml
+
+# 建立TLS bootstrap secret来提供自动签证使用
+- name: Create bootstrap-token-Secret
+  command: "kubectl apply -f /usr/local/src/kubernetes/bootstrap-token-Secret.yml"
+  run_once: true
+
+# 自动处理 CSR 请求
+- name: Create TLS Bootstrap Autoapprove RBAC
+  command: "kubectl apply -f /usr/local/src/kubernetes/kubelet-bootstrap-rbac.yml"
+  run_once: true
+
+# 创建kubectl logs 权限
+- name: Create TLS Bootstrap kubelet RBAC
+  command: "kubectl apply -f /usr/local/src/kubernetes/apiserver-to-kubelet-rbac.yml"
+  run_once: true

@@ -1,0 +1,26 @@
+---
+- name: Distribute kube-scheduler Configure file
+  copy: 
+    src: /etc/kubernetes/{{ item }}
+    dest: /etc/kubernetes/
+    mode: 0644 
+    owner: root
+    group: root
+  with_items:
+    - scheduler.kubeconfig
+
+- name: Distribute the service file
+  template: 
+    src: kube-scheduler.service
+    dest: /etc/systemd/system
+
+- name: Force systemd to reread configs
+  systemd:
+    daemon_reload: yes
+
+- name: Start kube-scheduler
+  systemd: 
+    name: kube-scheduler
+    state: restarted
+    enabled: yes 
+    daemon_reload: yes

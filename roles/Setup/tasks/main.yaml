@@ -1,0 +1,12 @@
+---
+# 设置主机名、主机名解析、设置时区、关闭Swap、设置系统参数
+- include_tasks: base.yaml
+
+# 安装相关软件包
+- include_tasks: package.yaml
+
+# 配置NTP
+- include_tasks: ntp.yaml
+
+# 防火墙配置
+- include_tasks: firewall.yaml

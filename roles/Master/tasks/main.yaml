@@ -1,0 +1,15 @@
+---
+# This Playbook Install Kubernetes Master Node
+  - include_tasks: cni.yaml
+
+  - include_tasks: kubernetes.yaml
+
+  - include_tasks: kube-apiserver.yaml
+
+  - include_tasks: kube-controller-manager.yaml
+  
+  - include_tasks: kube-scheduler.yaml
+
+  - include_tasks: kubelet.yaml
+
+  - include_tasks: kube-proxy.yaml

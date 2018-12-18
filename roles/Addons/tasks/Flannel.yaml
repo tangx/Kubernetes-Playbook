@@ -1,0 +1,17 @@
+---
+# flannel
+- name: Create flannel step 1/3
+  file: 
+    path: /usr/local/src/kubernetes/flannel
+    state: directory 
+    mode: 0655
+
+- name: Create flannel step 2/3
+  template:
+    src: 'flannel/kube-flannel.yml'
+    dest: /usr/local/src/kubernetes/flannel/kube-flannel.yml
+
+- name: Create flannel step 3/3
+  command: "kubectl apply -f /usr/local/src/kubernetes/flannel/kube-flannel.yml"
+  run_once: true
+  when: Network == "flannel"

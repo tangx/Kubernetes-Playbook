@@ -1,0 +1,53 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: redis
+  namespace: elk
+  labels:
+    k8s-app: redis
+spec:
+  selector:
+    k8s-app: redis
+  ports:
+    - protocol: TCP
+      port: 6379
+      targetPort: 6379
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis
+  namespace: elk
+  labels:
+    k8s-app: redis
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      k8s-app: redis
+  template:
+    metadata:
+      labels:
+        k8s-app: redis
+    spec:
+      containers:
+        - name: redis
+          image: redis:4.0.6
+          args: 
+            - "redis-server"
+            - "/etc/redis.conf"
+          ports:
+            - containerPort: 6379
+          volumeMounts:
+            - name: redis
+              mountPath: /etc/redis.conf
+              subPath: redis.conf
+            - name: redis-data
+              mountPath: /data
+      volumes:
+        - name: redis
+          configMap:
+            name: redis
+        - name: redis-data
+          persistentVolumeClaim:
+            claimName: redis

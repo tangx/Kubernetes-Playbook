@@ -1,0 +1,41 @@
+# kind: PersistentVolumeClaim
+# apiVersion: v1
+# metadata:
+#   name: elasticsearch
+#   namespace: elk
+#   annotations:
+#     volume.beta.kubernetes.io/storage-class: "managed-nfs-storage"
+# spec:
+#   accessModes:
+#     - ReadWriteMany
+#   resources:
+#     requests:
+#       storage: 10Gi
+# ---
+# kind: PersistentVolumeClaim
+# apiVersion: v1
+# metadata:
+#   name: redis
+#   namespace: default
+#   annotations:
+#     volume.beta.kubernetes.io/storage-class: "managed-nfs-storage"
+# spec:
+#   accessModes:
+#     - ReadWriteMany
+#   resources:
+#     requests:
+#       storage: 10Gi
+# ---
+# kind: PersistentVolumeClaim
+# apiVersion: v1
+# metadata:
+#   name: logstash
+#   namespace: default
+#   annotations:
+#     volume.beta.kubernetes.io/storage-class: "managed-nfs-storage"
+# spec:
+#   accessModes:
+#     - ReadWriteMany
+#   resources:
+#     requests:
+#       storage: 10Gi

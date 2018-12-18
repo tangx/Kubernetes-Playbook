@@ -1,0 +1,44 @@
+---
+# 设置主机名
+- name: Set the Hostname
+  hostname: 
+    name: '{{ hostname }}'
+  when: hostname is defined
+
+# 增加主机名解析
+- name: Increase Hostname resolution
+  template:
+    src: hosts
+    dest: /etc/hosts
+    backup: yes
+
+# 设置系统时区
+- name: Set system time zone
+  timezone:
+    name: "{{ TimeZone }}"
+
+# 关闭 swap 分区
+- name: Turn off Swap with fstab file
+  lineinfile:
+    dest: /etc/fstab
+    regexp: '^/[\S]+\s+none\s+swap '
+    backup: yes
+    state: absent
+
+# 设置系统参数
+- name: Set kernel parameters
+  sysctl:
+    name: "{{ item.key }}"
+    value: "{{ item.value }}"
+    sysctl_file: /etc/sysctl.d/kubernetes.conf
+    ignoreerrors: yes
+    reload: yes
+  with_dict: "{{ sysctl_rules }}"
+
+- name: modify hard nofile limits
+  copy: 
+    src: kubernetes.limits.conf
+    dest: /etc/security/limits.d/kubernetes.conf
+
+- name: Turn off Swap
+  command: swapoff -a

@@ -1,0 +1,71 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: minio
+  namespace: registry
+  labels:
+    app: minio
+spec:
+  type: LoadBalancer
+  ports:
+    - port: 9000
+      targetPort: 9000
+      protocol: TCP
+  selector:
+    app: minio
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: minio
+  namespace: registry
+  labels:
+    app: minio
+spec:
+  strategy:
+    type: Recreate
+  replicas: 1
+  selector:
+    matchLabels:
+      app: minio
+  template:
+    metadata:
+      labels:
+        app: minio
+    spec:
+      containers:
+        - name: minio
+          image: minio/minio:RELEASE.2018-11-22T02-51-56Z
+          readinessProbe:
+            httpGet:
+              path: /minio/health/ready
+              port: 9000
+            initialDelaySeconds: 120
+            periodSeconds: 20
+          livenessProbe:
+            httpGet:
+              path: /minio/health/live
+              port: 9000
+            initialDelaySeconds: 120
+            periodSeconds: 20
+          args:
+          - server
+          - /data
+          env:
+          - name: MINIO_ACCESS_KEY
+            value: "L20DDBWNE99GPXPAHMEL"
+          - name: MINIO_SECRET_KEY
+            value: "JecN82POlqdLzyJ9Yk4VE0kdrgqLH1KJioZCxGHD"
+          ports:
+            - containerPort: 9000
+      #     volumeMounts:
+      #       - name: minio
+      #         mountPath: "/data"
+      # volumes:
+      #   # - name: data
+      #   #   persistentVolumeClaim:
+      #   #     claimName: minio-pv-claim
+      #   - name: minio
+      #     hostPath:
+      #       path: /var/lib/minio

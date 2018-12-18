@@ -1,0 +1,26 @@
+---
+- name: Ensure dependencies are installed.
+  apt:
+    name:
+      - apt-transport-https
+      - ca-certificates
+    state: present
+
+- name: Add Docker apt key.
+  apt_key:
+    url: http://mirrors.aliyun.com/docker-ce/linux/ubuntu/gpg
+    id: 0EBFCD88
+    state: present
+
+# 添加Docker安装源
+- name: Add a Docker installation source
+  apt_repository:
+    repo: deb [arch=amd64] https://mirrors.tuna.tsinghua.edu.cn/docker-ce/linux/ubuntu xenial stable
+    update_cache: yes
+
+- name: Install Docker
+  apt:
+    name: docker-ce={{ DockerVersion }}*
+    update_cache: yes
+    allow_unauthenticated: no
+  notify: Restart Docker

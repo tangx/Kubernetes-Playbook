@@ -1,0 +1,14 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: nginx
+  namespace: lnmp
+spec:
+  rules:
+  - host: www.splunk.org.cn
+    http:
+      paths:
+        - path: /
+          backend:
+            serviceName: nginx
+            servicePort: 80

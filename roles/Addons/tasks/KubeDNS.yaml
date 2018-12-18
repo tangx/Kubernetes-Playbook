@@ -1,0 +1,16 @@
+---
+# KubeDNS
+- name: Create KubeDNS step 1/2
+  template: 
+    src: '{{ item }}'
+    dest: /usr/local/src/kubernetes/kubedns/
+  with_items:
+    - kubedns/kubedns-cm.yaml
+    - kubedns/kubedns-sa.yaml
+    - kubedns/kubedns-svc.yaml 
+    - kubedns/kubedns-controller.yaml
+
+- name: Create KubeDNS step 2/2
+  command: "kubectl apply -f /usr/local/src/kubernetes/kubedns"
+  run_once: true
+  when: DNS == "kube-dns"

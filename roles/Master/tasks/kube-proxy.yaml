@@ -1,0 +1,64 @@
+---
+- name: Distribute the service file
+  template: 
+    src: kube-proxy.service
+    dest: /etc/systemd/system
+
+- name: Distribute kube-proxy Configure file
+  copy: 
+    src: /etc/kubernetes/{{ item }}
+    dest: /etc/kubernetes/
+    mode: 0644 
+    owner: root
+    group: root
+  with_items:
+    - kube-proxy.conf
+
+- name: Distribute the service file
+  template: 
+    src: kube-proxy.yml
+    dest: /usr/local/src/kubernetes
+
+# 创建kube-proxy权限
+- name: Create kube-proxy SA
+  command: "kubectl apply -f /usr/local/src/kubernetes/kube-proxy.yml"
+  run_once: true
+
+- name: register kube-proxy.kubeconfig rc
+  shell: find /etc/kubernetes -type f -name kube-proxy.kubeconfig | grep kube-proxy.kubeconfig
+  ignore_errors: True
+  register: kubeproxykubeconfig
+
+# Kube Porxy
+- name: register kube proxy token
+  command: kubectl -n kube-system get sa/kube-proxy --output=jsonpath='{.secrets[0].name}'
+  register: kube_proxy_token
+  when: kubeproxykubeconfig.rc != 0
+
+- name: register jwt_token
+  shell: "kubectl -n kube-system get secret/{{ kube_proxy_token.stdout }} --output=jsonpath='{.data.token}' | base64 -d"
+  register: jwt_token
+  when: kubeproxykubeconfig.rc != 0
+
+- name: set-cluster kube-proxy
+  command: kubectl config set-cluster kubernetes --certificate-authority=/etc/kubernetes/pki/ca.pem --embed-certs=true --server={{ KUBE_APISERVER }} --kubeconfig=/etc/kubernetes/kube-proxy.kubeconfig
+  when: kubeproxykubeconfig.rc != 0
+
+- name: set-credentials kube-proxy
+  command: kubectl config set-credentials kubernetes --token={{ jwt_token.stdout }} --kubeconfig=/etc/kubernetes/kube-proxy.kubeconfig
+  when: kubeproxykubeconfig.rc != 0
+
+- name: config set-context kube-proxy
+  command: kubectl config set-context kubernetes --cluster=kubernetes --user=kubernetes --kubeconfig=/etc/kubernetes/kube-proxy.kubeconfig
+  when: kubeproxykubeconfig.rc != 0
+
+- name: config use-context kube-proxy
+  command: kubectl config use-context kubernetes --kubeconfig=/etc/kubernetes/kube-proxy.kubeconfig
+  when: kubeproxykubeconfig.rc != 0
+
+- name: Start Kube-Proxy service
+  systemd: 
+    name: 'kube-proxy'
+    state: restarted
+    enabled: yes 
+    daemon_reload: yes

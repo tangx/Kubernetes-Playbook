@@ -1,0 +1,117 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: elasticsearch
+  namespace: elk
+  labels:
+    k8s-app: elasticsearch
+spec:
+  clusterIP: None
+  ports:
+    - name: http
+      port: 9200
+      protocol: TCP
+  selector:
+    k8s-app: elasticsearch
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: elasticsearch
+  namespace: elk
+  labels:
+    k8s-app: elasticsearch
+spec: 
+  replicas: 2
+  revisionHistoryLimit: 15
+  serviceName: elasticsearch
+  selector:
+    matchLabels:
+      k8s-app: elasticsearch
+  template:
+    metadata:
+      labels:
+        k8s-app: elasticsearch
+    spec:
+      initContainers:
+        - name: init
+          image: busybox:1.29.3
+          imagePullPolicy: IfNotPresent
+          command: 
+            - sh
+            - "-c"
+            - |
+              set -ex
+              echo "cluster.name: elk-cluster" > /usr/local/elasticsearch/config/elasticsearch.yml
+              echo "path.data: /usr/local/elasticsearch/data" >> /usr/local/elasticsearch/config/elasticsearch.yml
+              echo "node.name: $(hostname)" >> /usr/local/elasticsearch/config/elasticsearch.yml
+              echo "node.master: true" >> /usr/local/elasticsearch/config/elasticsearch.yml
+              echo "node.data: true" >> /usr/local/elasticsearch/config/elasticsearch.yml
+              echo "network.host: 0.0.0.0" >> /usr/local/elasticsearch/config/elasticsearch.yml
+              echo "http.port: 9200" >> /usr/local/elasticsearch/config/elasticsearch.yml
+              echo "transport.tcp.port: 9300" >> /usr/local/elasticsearch/config/elasticsearch.yml
+              echo "http.cors.enabled: true" >> /usr/local/elasticsearch/config/elasticsearch.yml
+              echo "discovery.zen.ping.unicast.hosts: [elasticsearch-1.elasticsearch.elk.svc.cluster.local, elasticsearch-0.elasticsearch.elk.svc.cluster.local]" >> /usr/local/elasticsearch/config/elasticsearch.yml
+          volumeMounts:
+            - name: etc
+              readOnly: false
+              mountPath: /usr/local/elasticsearch/config/
+      containers:
+        - name: elasticsearch
+          image: daocloud.io/buxiaomo/elasticsearch:6.2.4
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            httpGet:
+              httpHeaders:
+                - name: HeachCheck
+                  value: "True"
+              port: 9200
+              path: /
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+          readinessProbe: 
+            httpGet:
+              httpHeaders:
+                - name: HeachCheck
+                  value: "True"
+              port: 9200
+              path: /
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+          resources:
+            limits:
+              cpu: "1"
+              memory: 2Gi
+            requests:
+              cpu: "1"
+              memory: 2Gi
+          volumeMounts:
+            - name: etc
+              readOnly: false
+              mountPath: /usr/local/elasticsearch/config/elasticsearch.yml
+              subPath: elasticsearch.yml
+            - name: data
+              mountPath: /usr/local/elasticsearch/data
+          ports:
+            - name: http
+              containerPort: 9200
+            - name: tcp
+              containerPort: 9300
+          env:
+            - name: MYSQL_ALLOW_EMPTY_PASSWORD
+              value: "1"
+      volumes:
+          - name: etc
+            emptyDir: {}
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+        namespace: elk
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: 5Gi
+        storageClassName: managed-nfs-storage

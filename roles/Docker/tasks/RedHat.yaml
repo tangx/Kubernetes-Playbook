@@ -1,0 +1,21 @@
+---  
+- name: Install Docker dependent software - CentOS
+  yum:
+    name: "{{ packages }}"
+  vars:
+    packages:
+    - yum-utils
+    - device-mapper-persistent-data
+    - lvm2
+
+- name: Add Docker repository.
+  copy:
+    src: docker-ce.repo
+    dest: '/etc/yum.repos.d/docker-ce.repo'
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Install Docker
+  yum:
+    name: docker-ce-{{ DockerVersion }}*

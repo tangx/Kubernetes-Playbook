@@ -1,0 +1,29 @@
+---  
+  # 安装IPVS
+  - name: Install IPVS
+    package:
+      name: "{{ packages }}"
+    vars:
+      packages:
+      - ipset
+      - ipvsadm
+
+  # 加载IPVS内核模块
+  - name: Load the IPVS kernel module
+    copy:
+      src: ipvs.conf
+      dest: /etc/modules-load.d/ipvs.conf
+      mode: 655
+
+  # 启动systemd-modules-load服务
+  - name: Start the systemd-modules-load service
+    systemd: 
+      name: systemd-modules-load
+      enabled: yes
+      state: restarted
+
+  - name: Create Addon directory
+    file: 
+      path: /usr/local/src/kubernetes
+      state: directory 
+      mode: 0655

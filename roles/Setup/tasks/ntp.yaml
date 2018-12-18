@@ -1,0 +1,24 @@
+---
+# NTP相关配置
+- name: Installation NTP package
+  package:
+    name: ntp
+
+- name: Upload NTP service configuration file
+  copy: 
+    src: ntp.conf
+    dest: /etc/ntp.conf
+
+- name: Start the NTP service - Ubuntu
+  systemd: 
+    name: ntp
+    enabled: yes
+    state: restarted
+  when: ansible_distribution == "Ubuntu"
+
+- name: Start the NTP service - CentOS
+  systemd: 
+    name: ntpd
+    enabled: yes
+    state: restarted
+  when: ansible_distribution == "CentOS"

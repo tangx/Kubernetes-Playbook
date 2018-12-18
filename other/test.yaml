@@ -1,0 +1,17 @@
+---
+- hosts: master
+  vars:
+    http_port: 80
+    max_clients: 200
+  user: root
+  tasks:
+  - name: Create a kubernetes namespace
+    kubernetes:
+      api_endpoint: "{{ VIP }}:{{ Port }}"
+      insecure: true
+      inline_data:
+        kind: Namespace
+        apiVersion: v1
+        metadata:
+          name: ansible-test
+      state: present

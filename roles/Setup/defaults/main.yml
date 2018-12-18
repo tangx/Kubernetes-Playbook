@@ -1,0 +1,18 @@
+---
+# defaults file for sysctl
+sysctl_rules: {
+  net.ipv4.ip_forward: 1,
+  vm.swappiness: 0,
+  vm.overcommit_memory: 1,
+  vm.panic_on_oom: 0,
+  fs.inotify.max_user_watches: 89100,
+  fs.file-max: 52706963,
+  fs.nr_open: 52706963,
+  net.netfilter.nf_conntrack_tcp_timeout_close_wait: 3600,
+  net.bridge.bridge-nf-call-ip6tables: 1,
+  net.bridge.bridge-nf-call-iptables: 1,
+  net.netfilter.nf_conntrack_max: 2310720,
+  net.nf_conntrack_max: 131072,
+  net.netfilter.nf_conntrack_tcp_timeout_established: 86400,
+  vm.max_map_count: 262144
+}

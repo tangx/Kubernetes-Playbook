@@ -1,0 +1,15 @@
+---
+# Calico
+- name: Create Calico step 1/2
+  template: 
+    src: '{{ item }}'
+    dest: /usr/local/src/kubernetes/calico/
+  with_items:
+    - calico/calico.yml
+    - calico/calicoctl.yml
+    - calico/rbac-kdd.yml
+
+- name: Create Calico step 2/2
+  command: "kubectl apply -f /usr/local/src/kubernetes/calico/"
+  run_once: true
+  when: Network == "calico"

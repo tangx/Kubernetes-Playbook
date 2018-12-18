@@ -1,0 +1,11 @@
+---
+# 安装相关软件包
+- name: Installation dependency package
+  package:
+    name: "{{ packages }}"
+    update_cache: yes
+  vars:
+    packages:
+    - conntrack
+    - sysstat
+    - iptables

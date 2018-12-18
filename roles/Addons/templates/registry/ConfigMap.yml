@@ -1,0 +1,51 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: config
+  namespace: registry
+  labels:
+    app: redis
+data:
+  config.yml: |
+    version: 0.1
+    log:
+      accesslog:
+        disabled: true
+      level: debug
+      formatter: text
+      fields:
+        service: registry
+        environment: staging
+    loglevel: debug
+    storage:
+      s3:
+        accesskey: L20DDBWNE99GPXPAHMEL
+        secretkey: JecN82POlqdLzyJ9Yk4VE0kdrgqLH1KJioZCxGHD
+        region: us-east-1
+        regionendpoint: http://minio:9000/
+        bucket: registry
+        encrypt: false
+        secure: true
+        v4auth: true
+        chunksize: 5242880
+        rootdirectory: /
+      delete:
+        enabled: true
+      redirect:
+        disable: false
+      cache:
+        blobdescriptor: redis
+    http:
+      addr: :5000
+      headers:
+        X-Content-Type-Options: [nosniff]
+    redis:
+      addr: redis:6379
+      db: 0
+      dialtimeout: 10ms
+      readtimeout: 10ms
+      writetimeout: 10ms
+      pool:
+        maxidle: 16
+        maxactive: 64
+        idletimeout: 300s

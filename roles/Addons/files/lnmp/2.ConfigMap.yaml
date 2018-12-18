@@ -1,0 +1,373 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mysql
+  namespace: lnmp
+data:
+  mysqld.cnf: |
+    [client]
+    #password   = your_password
+    port        = 3306
+    socket      = /var/run/mysqld/mysqld.sock
+
+    [mysqld]
+    #bind-address	= 127.0.0.1
+    symbolic-links=0
+    port        = 3306
+    socket		= /var/run/mysqld/mysqld.sock
+    pid-file	= /var/run/mysqld/mysqld.pid
+    datadir		= /var/lib/mysql
+    skip-external-locking
+    key_buffer_size = 32M
+    max_allowed_packet = 1M
+    table_open_cache = 128
+    sort_buffer_size = 768K
+    net_buffer_length = 8K
+    read_buffer_size = 768K
+    read_rnd_buffer_size = 512K
+    myisam_sort_buffer_size = 8M
+    thread_cache_size = 16
+    query_cache_size = 16M
+    tmp_table_size = 32M
+    performance_schema_max_table_instances = 500
+
+    explicit_defaults_for_timestamp = true
+    #skip-networking
+    max_connections = 500
+    max_connect_errors = 100
+    open_files_limit = 65535
+
+    log-bin=mysql-bin
+    binlog_format=mixed
+    server-id   = 1
+    expire_logs_days = 10
+    early-plugin-load = ""
+
+    #loose-innodb-trx=0
+    #loose-innodb-locks=0
+    #loose-innodb-lock-waits=0
+    #loose-innodb-cmp=0
+    #loose-innodb-cmp-per-index=0
+    #loose-innodb-cmp-per-index-reset=0
+    #loose-innodb-cmp-reset=0
+    #loose-innodb-cmpmem=0
+    #loose-innodb-cmpmem-reset=0
+    #loose-innodb-buffer-page=0
+    #loose-innodb-buffer-page-lru=0
+    #loose-innodb-buffer-pool-stats=0
+    #loose-innodb-metrics=0
+    #loose-innodb-ft-default-stopword=0
+    #loose-innodb-ft-inserted=0
+    #loose-innodb-ft-deleted=0
+    #loose-innodb-ft-being-deleted=0
+    #loose-innodb-ft-config=0
+    #loose-innodb-ft-index-cache=0
+    #loose-innodb-ft-index-table=0
+    #loose-innodb-sys-tables=0
+    #loose-innodb-sys-tablestats=0
+    #loose-innodb-sys-indexes=0
+    #loose-innodb-sys-columns=0
+    #loose-innodb-sys-fields=0
+    #loose-innodb-sys-foreign=0
+    #loose-innodb-sys-foreign-cols=0
+
+    default_storage_engine = InnoDB
+    innodb_file_per_table = 1
+    innodb_data_home_dir = /var/lib/mysql
+    innodb_data_file_path = ibdata1:10M:autoextend
+    innodb_log_group_home_dir = /var/lib/mysql
+    innodb_buffer_pool_size = 128M
+    innodb_log_file_size = 32M
+    innodb_log_buffer_size = 8M
+    innodb_flush_log_at_trx_commit = 1
+    innodb_lock_wait_timeout = 50
+
+    [mysqldump]
+    quick
+    max_allowed_packet = 16M
+
+    [mysql]
+    no-auto-rehash
+
+    [myisamchk]
+    key_buffer_size = 32M
+    sort_buffer_size = 768K
+    read_buffer = 2M
+    write_buffer = 2M
+
+    [mysqlhotcopy]
+    interactive-timeout
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx
+  namespace: lnmp
+data:
+  nginx.conf: |
+    user  nginx nginx;
+    worker_processes auto;
+    error_log  /var/log/nginx/error.log warn;
+    pid        /var/run/nginx.pid;
+    worker_rlimit_nofile 51200;
+
+    events {
+        use epoll;
+        worker_connections 51200;
+        multi_accept on;
+    }
+
+    http {
+        include       mime.types;
+        default_type  application/octet-stream;
+
+        log_format main '{"site": "$server_name",'
+                        '"server": "$host",'
+                        '"dest_port": "$server_port",'
+                        '"dest_ip": "$server_addr",'
+                        '"src": "$remote_addr",'
+                        '"src_ip": "$realip_remote_addr",'
+                        '"user": "$remote_user",'
+                        '"time_local": "$time_local",'
+                        '"protocol": "$server_protocol",'
+                        '"status": "$status",'
+                        '"bytes_out": "$bytes_sent",'
+                        '"bytes_in": "$upstream_bytes_received",'
+                        '"http_referer": "$http_referer",'
+                        '"http_user_agent": "$http_user_agent",'
+                        '"nginx_version": "$nginx_version",'
+                        '"http_x_forwarded_for": "$http_x_forwarded_for",'
+                        '"http_x_header": "$http_x_header",'
+                        '"uri_query": "$query_string",'
+                        '"uri_path": "$uri",'
+                        '"http_method": "$request_method",'
+                        '"response_time": "$upstream_response_time",'
+                        '"cookie": "$http_cookie",'
+                        '"request_time":"$request_time"}';
+
+        access_log /var/log/nginx/access.log main;
+
+        server_names_hash_bucket_size 128;
+        client_header_buffer_size 32k;
+        large_client_header_buffers 4 32k;
+        client_max_body_size 50m;
+
+        sendfile   on;
+        tcp_nopush on;
+
+        keepalive_timeout 60;
+
+        tcp_nodelay on;
+
+        fastcgi_connect_timeout 300;
+        fastcgi_send_timeout 300;
+        fastcgi_read_timeout 300;
+        fastcgi_buffer_size 64k;
+        fastcgi_buffers 4 64k;
+        fastcgi_busy_buffers_size 128k;
+        fastcgi_temp_file_write_size 256k;
+
+        gzip on;
+        gzip_min_length  1k;
+        gzip_buffers     4 16k;
+        gzip_http_version 1.1;
+        gzip_comp_level 2;
+        gzip_types     text/plain application/javascript application/x-javascript text/javascript text/css application/xml application/xml+rss;
+        gzip_vary on;
+        gzip_proxied   expired no-cache no-store private auth;
+        gzip_disable   "MSIE [1-6]\.";
+
+        server_tokens off;
+
+        server{
+            listen 80;
+            server_name _;
+            index index.html index.htm index.php default.html default.htm default.php;
+            root  /var/www/html;
+            location ~ [^/]\.php(/|$) {
+              try_files $uri =404;
+              fastcgi_index index.php;
+              include fastcgi.conf;
+              fastcgi_pass  php:9000;
+            }
+            location = /healthz {
+              log_not_found off;
+              access_log off;
+              return 200;
+            }
+        }
+    }
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: php
+  namespace: lnmp
+data:
+  php.ini: |
+    [PHP]
+    engine = On
+    short_open_tag = On
+    precision = 14
+    output_buffering = 4096
+    zlib.output_compression = Off
+    implicit_flush = Off
+    unserialize_callback_func =
+    serialize_precision = -1
+    disable_functions = passthru,exec,system,chroot,chgrp,chown,shell_exec,proc_open,proc_get_status,popen,ini_alter,ini_restore,dl,openlog,syslog,readlink,symlink,popepassthru,stream_socket_server
+    disable_classes =
+    zend.enable_gc = On
+    expose_php = On
+    max_execution_time = 300
+    max_input_time = 60
+    memory_limit = 128M
+    file_uploads = On
+    upload_max_filesize = 64M
+    post_max_size = 64M
+    error_reporting = E_ALL & ~E_DEPRECATED & ~E_STRICT
+    display_errors = Off
+    display_startup_errors = Off
+    log_errors = On
+    log_errors_max_len = 1024
+    ignore_repeated_errors = Off
+    ignore_repeated_source = Off
+    report_memleaks = On
+    html_errors = On
+    variables_order = "GPCS"
+    request_order = "GP"
+    register_argc_argv = Off
+    auto_globals_jit = On
+    auto_prepend_file =
+    auto_append_file =
+    default_mimetype = "text/html"
+    default_charset = "UTF-8"
+    doc_root =
+    user_dir =
+    enable_dl = Off
+    cgi.fix_pathinfo=0
+    max_file_uploads = 20
+    allow_url_fopen = On
+    allow_url_include = Off
+    default_socket_timeout = 60
+    [CLI Server]
+    cli_server.color = On
+    [Date]
+    date.timezone = Asia/Shanghai
+    [filter]
+    [iconv]
+    [intl]
+    [sqlite3]
+    [Pcre]
+    [Pdo]
+    [Pdo_mysql]
+    pdo_mysql.cache_size = 2000
+    pdo_mysql.default_socket=
+    [Phar]
+    [mail function]
+    SMTP = localhost
+    smtp_port = 25
+    mail.add_x_header = Off
+    [ODBC]
+    odbc.allow_persistent = On
+    odbc.check_persistent = On
+    odbc.max_persistent = -1
+    odbc.max_links = -1
+    odbc.defaultlrl = 4096
+    odbc.defaultbinmode = 1
+    [Interbase]
+    ibase.allow_persistent = 1
+    ibase.max_persistent = -1
+    ibase.max_links = -1
+    ibase.timestampformat = "%Y-%m-%d %H:%M:%S"
+    ibase.dateformat = "%Y-%m-%d"
+    ibase.timeformat = "%H:%M:%S"
+    [MySQLi]
+    mysqli.max_persistent = -1
+    mysqli.allow_persistent = On
+    mysqli.max_links = -1
+    mysqli.cache_size = 2000
+    mysqli.default_port = 3306
+    mysqli.default_socket =
+    mysqli.default_host =
+    mysqli.default_user =
+    mysqli.default_pw =
+    mysqli.reconnect = Off
+    [mysqlnd]
+    mysqlnd.collect_statistics = On
+    mysqlnd.collect_memory_statistics = Off
+    [OCI8]
+    [PostgreSQL]
+    pgsql.allow_persistent = On
+    pgsql.auto_reset_persistent = Off
+    pgsql.max_persistent = -1
+    pgsql.max_links = -1
+    pgsql.ignore_notice = 0
+    pgsql.log_notice = 0
+    [bcmath]
+    bcmath.scale = 0
+    [browscap]
+    [Session]
+    session.save_handler = redis
+    session.save_path = "tcp://redis-haproxy:6379"
+    ; session.save_handler = files
+    session.use_strict_mode = 0
+    session.use_cookies = 1
+    session.use_only_cookies = 1
+    session.name = PHPSESSID
+    session.auto_start = 0
+    session.cookie_lifetime = 0
+    session.cookie_path = /
+    session.cookie_domain =
+    session.cookie_httponly =
+    session.serialize_handler = php
+    session.gc_probability = 1
+    session.gc_divisor = 1000
+    session.gc_maxlifetime = 1440
+    session.referer_check =
+    session.cache_limiter = nocache
+    session.cache_expire = 180
+    session.use_trans_sid = 0
+    session.sid_length = 26
+    session.trans_sid_tags = "a=href,area=href,frame=src,form="
+    session.sid_bits_per_character = 5
+    [Assertion]
+    zend.assertions = -1
+    [COM]
+    [mbstring]
+    [gd]
+    [exif]
+    [Tidy]
+    tidy.clean_output = Off
+    [soap]
+    soap.wsdl_cache_enabled=1
+    soap.wsdl_cache_dir="/tmp"
+    soap.wsdl_cache_ttl=86400
+    soap.wsdl_cache_limit = 5
+    [sysvshm]
+    [ldap]
+    ldap.max_links = -1
+    [dba]
+    [opcache]
+    [curl]
+    [openssl]
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: php-fpm
+  namespace: lnmp
+data:
+  www.conf: |
+    [www]
+    user = www-data
+    group = www-data
+    listen = 127.0.0.1:9000
+    pm = dynamic
+    pm.max_children = 40
+    pm.start_servers = 32
+    pm.min_spare_servers = 10
+    pm.max_spare_servers = 40
+    

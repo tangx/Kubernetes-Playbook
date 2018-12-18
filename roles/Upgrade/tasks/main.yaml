@@ -1,0 +1,7 @@
+---
+# This Playbook Install and Config Etcd Server
+# 更新Master组件
+- include_tasks: master.yaml
+
+# 更新Node组件
+- include_tasks: node.yaml

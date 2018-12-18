@@ -1,0 +1,10 @@
+---
+# This Playbook Install and Config Etcd Server
+# 安装haproxy
+- include_tasks: haproxy.yaml
+
+# 安装keepalived
+- include_tasks: keepalived.yaml
+
+# # 检查服务
+# - include_tasks: check.yaml

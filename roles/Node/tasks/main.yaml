@@ -1,0 +1,81 @@
+---
+# This Playbook Install Kubernetes Node
+  - name: Distribute CNI binary files
+    include_tasks: cni.yaml
+
+  - name: Distribute Kubernetes binary file
+    include_tasks: kubernetes.yaml
+
+  - name: kubelet
+    include_tasks: kubelet.yaml
+
+  - name: kubelet
+    include_tasks: kube-proxy.yaml
+
+  # - name: Create Kubernetes manifests directory
+  #   file: 
+  #     path: /etc/kubernetes/manifests
+  #     state: directory 
+  #     mode: 0655
+
+  # - name: Create .kube directory
+  #   file: 
+  #     path: /root/.kube
+  #     state: directory 
+  #     mode: 0655
+
+  # - name: Set admin kubeconfig
+  #   command: cp /etc/kubernetes/admin.kubeconfig ~/.kube/config
+
+  # # Kube Porxy
+  # # - name: create serviceaccount
+  # #   command: kubectl -n kube-system create serviceaccount kube-proxy
+  # #   run_once: true
+
+  # # - name: create clusterrolebinding
+  # #   command: kubectl create clusterrolebinding system:kube-proxy --clusterrole system:node-proxier --serviceaccount kube-system:kube-proxy
+  # #   run_once: true
+
+  # - name: register kube proxy token
+  #   command: kubectl -n kube-system get sa/kube-proxy --output=jsonpath='{.secrets[0].name}'
+  #   register: kube_proxy_token
+
+  # - name: register jwt_token
+  #   shell: "kubectl -n kube-system get secret/{{ kube_proxy_token.stdout }} --output=jsonpath='{.data.token}' | base64 -d"
+  #   register: jwt_token
+
+  # - name: set-cluster kube-proxy
+  #   command: kubectl config set-cluster kubernetes --certificate-authority=/etc/kubernetes/pki/ca.pem --embed-certs=true --server={{ KUBE_APISERVER }} --kubeconfig=/etc/kubernetes/kube-proxy.kubeconfig
+
+  # - name: set-credentials kube-proxy
+  #   command: kubectl config set-credentials kubernetes --token={{ jwt_token.stdout }} --kubeconfig=/etc/kubernetes/kube-proxy.kubeconfig
+
+  # - name: config set-context kube-proxy
+  #   command: kubectl config set-context kubernetes --cluster=kubernetes --user=kubernetes --kubeconfig=/etc/kubernetes/kube-proxy.kubeconfig
+
+  # - name: config use-context kube-proxy
+  #   command: kubectl config use-context kubernetes --kubeconfig=/etc/kubernetes/kube-proxy.kubeconfig
+
+  # - name: Force systemd to reread configs
+  #   systemd:
+  #     daemon_reload: yes
+
+  # - name: Start kubelet service
+  #   systemd: 
+  #     name: 'kubelet'
+  #     state: restarted
+  #     enabled: yes 
+  #     daemon_reload: yes
+
+  # - name: Start Kube-Proxy service
+  #   systemd: 
+  #     name: 'kube-proxy'
+  #     state: restarted
+  #     enabled: yes 
+  #     daemon_reload: yes
+
+  # # Kubectl Completion Bash
+  # - name: Kubectl Completion Bash
+  #   copy: 
+  #     src: kubectl.sh
+  #     dest: /etc/profile.d/

@@ -1,0 +1,48 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: registry
+  namespace: registry
+  labels:
+    app: registry
+spec:
+  selector:
+    app: registry
+  type: NodePort
+  ports:
+    - protocol: TCP
+      port: 5000
+      targetPort: 5000
+      nodePort: 30001
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: registry
+  namespace: registry
+  labels:
+    app: registry
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: registry
+  template:
+    metadata:
+      labels:
+        app: registry
+    spec:
+      containers:
+        - name: registry
+          image: registry:2.6.1
+          ports:
+            - containerPort: 5000
+          volumeMounts:
+            - name: registry
+              mountPath: /etc/docker/registry/config.yml
+              subPath: config.yml
+      volumes:
+        - name: registry
+          configMap:
+            name: config

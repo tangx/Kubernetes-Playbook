@@ -1,0 +1,71 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: php
+  namespace: lnmp
+spec:
+  selector:
+    k8s-app: php
+  ports:
+    - protocol: TCP
+      port: 9000
+      targetPort: 9000
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: php
+  namespace: lnmp
+  labels:
+    k8s-app: php
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      k8s-app: php
+  template:
+    metadata:
+      labels:
+        k8s-app: php
+    spec:
+      containers:
+        - name: php
+          image: daocloud.io/buxiaomo/php:7.2.8-fpm-alpine3.7.ext
+          ports:
+            - containerPort: 9000
+          resources:
+            limits:
+              cpu: "1"
+              memory: 1024Mi
+            requests:
+              cpu: "1"
+              memory: 1024Mi
+          readinessProbe:
+            tcpSocket:
+              port: 9000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            tcpSocket:
+              port: 9000
+            initialDelaySeconds: 15
+            periodSeconds: 20
+          volumeMounts:
+            - name: php
+              mountPath: /usr/local/etc/php/php.ini
+              subPath: php.ini
+            - name: fpm
+              mountPath: /usr/local/etc/php-fpm.d/www.conf
+              subPath: www.conf
+            - name: www
+              mountPath: /var/www/html
+      volumes:
+        - name: php
+          configMap:
+            name: php
+        - name: fpm
+          configMap:
+            name: php-fpm
+        - name: www
+          persistentVolumeClaim:
+            claimName: www

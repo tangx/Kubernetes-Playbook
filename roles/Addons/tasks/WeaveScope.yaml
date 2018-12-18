@@ -1,0 +1,21 @@
+---
+# Weave Scope
+- name: Weave Scope step 1/4
+  shell: kubectl version | base64 | tr -d '\n'
+  register: K8SVersion
+  run_once: true
+
+- name: Weave Scope step 2/4
+  command: date "+%a %b %d %Y %X GMT%z (%Z)"
+  register: Date
+  run_once: true
+
+- name: Weave Scope step 3/4
+  template:
+    src: WeaveScope/WeaveScope.yaml
+    dest: /usr/local/src/kubernetes/
+
+- name: Weave Scope step 4/4
+  command: kubectl apply -f /usr/local/src/kubernetes/weavescope/WeaveScope.yaml
+  run_once: true
+  when: WeaveScope == True

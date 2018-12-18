@@ -1,0 +1,8 @@
+127.0.0.1 localhost
+
+{% for host in groups['all'] %}
+{{ host }}  {{ hostvars[host].hostname }}
+{% endfor %}
+
+# The following lines are desirable for IPv6 capable hosts
+::1 localhost

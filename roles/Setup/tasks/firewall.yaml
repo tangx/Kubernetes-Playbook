@@ -1,0 +1,16 @@
+---
+# 关闭防火墙
+- name: Turn off the ufw - Ubuntu
+  systemd: 
+    name: ufw
+    enabled: no
+    state: stopped
+  when: ansible_distribution == "Ubuntu"
+
+# 关闭防火墙
+- name: Turn off the firewall - CentOS
+  systemd: 
+    name: firewalld
+    enabled: no
+    state: stopped
+  when: ansible_distribution == "CentOS"

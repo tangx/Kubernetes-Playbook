@@ -1,0 +1,11 @@
+---
+# CoreDNS
+- name: Create CoreDNS step 1/2
+  template: 
+    src: coredns/coredns.yml
+    dest: /usr/local/src/kubernetes/coredns/
+
+- name: Create CoreDNS step 2/2
+  command: "kubectl apply -f /usr/local/src/kubernetes/coredns/coredns.yml"
+  run_once: true
+  when: DNS == "coredns"

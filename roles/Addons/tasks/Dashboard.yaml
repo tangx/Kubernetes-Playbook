@@ -1,0 +1,14 @@
+---
+# Dashboard
+- name: Dashboard step 1/2
+  template:
+    src: '{{ item }}'
+    dest: /usr/local/src/kubernetes/Dashboard/
+  with_items:
+    - dashboard/anonymous-proxy-rbac.yml
+    - dashboard/kubernetes-dashboard.yml
+
+- name: Dashboard step 2/2
+  command: kubectl apply -f /usr/local/src/kubernetes/Dashboard
+  run_once: true
+  when: Dashboard == True

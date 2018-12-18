@@ -1,0 +1,34 @@
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: nginx
+  namespace: lnmp
+spec:
+  maxReplicas: 10
+  minReplicas: 1
+  scaleTargetRef:
+    apiVersion: extensions/v1beta1
+    kind: Deployment
+    name: nginx
+  targetCPUUtilizationPercentage: 80
+status:
+  currentReplicas: 1
+  desiredReplicas: 0
+
+---
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: php
+  namespace: lnmp
+spec:
+  maxReplicas: 10
+  minReplicas: 1
+  scaleTargetRef:
+    apiVersion: extensions/v1beta1
+    kind: Deployment
+    name: php
+  targetCPUUtilizationPercentage: 80
+status:
+  currentReplicas: 1
+  desiredReplicas: 0

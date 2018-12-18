@@ -1,0 +1,56 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: kibana
+  namespace: elk
+  labels:
+    k8s-app: kibana
+spec:
+  selector:
+    k8s-app: kibana
+  type: NodePort
+  ports:
+    - protocol: TCP
+      port: 5601
+      targetPort: 5601
+      nodePort: 30004
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kibana
+  namespace: elk
+  labels:
+    k8s-app: kibana
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      k8s-app: kibana
+  template:
+    metadata:
+      labels:
+        k8s-app: kibana
+    spec:
+      containers:
+        - name: kibana
+          image: daocloud.io/buxiaomo/kibana:6.2.4
+          args:
+            - "/usr/local/kibana/bin/kibana"
+          ports:
+            - containerPort: 5601
+          volumeMounts:
+            - name: kibana
+              mountPath: /usr/local/kibana/config/kibana.yml
+              subPath: kibana.yml
+          resources:
+            limits:
+              cpu: "1"
+              memory: 1024Mi
+            requests:
+              cpu: "1"
+              memory: 1024Mi
+      volumes:
+        - name: kibana
+          configMap:
+            name: kibana

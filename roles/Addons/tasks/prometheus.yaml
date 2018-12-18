@@ -1,0 +1,29 @@
+---
+# Ingress Nginx
+- name: Prometheus step 1
+  copy:
+    src: 'prometheus'
+    dest: /usr/local/src/kubernetes/prometheus
+
+- name: Prometheus step 2
+  command: kubectl apply -f/usr/local/src/kubernetes/prometheus/namespace.yml
+  when: Prometheus == True
+  run_once: true
+
+- name: Prometheus step 3
+  command: kubectl apply -f /usr/local/src/kubernetes/prometheus/operator/
+  run_once: true
+  when: Prometheus == True
+
+- name: Prometheus step 4
+  command: kubectl apply -f /usr/local/src/kubernetes/prometheus/{{ item }}
+  with_items:
+    - alertmanater/
+    - node-exporter/
+    - kube-state-metrics/
+    - grafana/
+    - kube-service-discovery/
+    - prometheus/
+    - servicemonitor/
+  run_once: true
+  when: Prometheus == True

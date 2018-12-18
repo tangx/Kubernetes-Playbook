@@ -1,0 +1,7 @@
+---
+# 重启Docker
+- name: Restart Docker
+  systemd: 
+    name: docker
+    enabled: yes
+    state: restarted

@@ -1,0 +1,91 @@
+---
+- name: Distribute Kubernetes kubelet file
+  copy:
+    src: '10-kubelet.conf'
+    dest: /etc/systemd/system/kubelet.service.d/
+    mode: 0644
+
+- name: Distribute kube-scheduler Configure file
+  copy: 
+    src: /etc/kubernetes/{{ item }}
+    dest: /etc/kubernetes/
+    mode: 0644 
+    owner: root
+    group: root
+  with_items:
+    - kubelet-conf.yml
+    - admin.kubeconfig
+    # - kubelet.kubeconfig
+
+- name: Distribute kubelet certificate step 1
+  copy: 
+    src: '/etc/kubernetes/pki/kubelet-{{ hostname }}-key.pem'
+    dest: /etc/kubernetes/pki/kubelet-key.pem
+    mode: 0644
+    owner: root
+    group: root
+
+- name: Distribute kubelet certificate step 2
+  copy: 
+    src: '/etc/kubernetes/pki/kubelet-{{ hostname }}.pem'
+    dest: /etc/kubernetes/pki/kubelet.pem
+    mode: 0644
+    owner: root
+    group: root
+
+- name: register kubelet.kubeconfig rc
+  shell: find /etc/kubernetes -type f -name kubelet.kubeconfig | grep kubelet.kubeconfig
+  ignore_errors: True
+  register: kubelet
+
+- name: kubectl config set-cluster
+  shell: "kubectl config set-cluster kubernetes --certificate-authority=/etc/kubernetes/pki/ca.pem --embed-certs=true --server=https://{{ VIP }}:{{ Port }} --kubeconfig=/etc/kubernetes/kubelet.kubeconfig"
+  when: kubelet.rc != 0
+
+- name: kubectl config set-credentials
+  shell: "kubectl config set-credentials system:node:{{ hostname }} --client-certificate=/etc/kubernetes/pki/kubelet.pem --client-key=/etc/kubernetes/pki/kubelet-key.pem --embed-certs=true --kubeconfig=/etc/kubernetes/kubelet.kubeconfig"
+  when: kubelet.rc != 0
+
+- name: kubectl config set-context
+  shell: "kubectl config set-context system:node:{{ hostname }}@kubernetes --cluster=kubernetes --user=system:node:{{ hostname }} --kubeconfig=/etc/kubernetes/kubelet.kubeconfig"
+  when: kubelet.rc != 0
+
+- name: kubectl config use-context
+  shell: "kubectl config use-context system:node:{{ hostname }}@kubernetes --kubeconfig=/etc/kubernetes/kubelet.kubeconfig"
+  when: kubelet.rc != 0
+
+- name: Distribute Kubernetes kubelet.pem
+  copy: 
+    src: '/etc/kubernetes/pki/kubelet-{{ hostname }}.pem'
+    dest: /etc/kubernetes/pki/kubelet.pem
+    mode: 0644
+    owner: root
+    group: root
+
+- name: Distribute the service file
+  template: 
+    src: kubelet.service
+    dest: /etc/systemd/system
+
+- name: Force systemd to reread configs
+  systemd:
+    daemon_reload: yes
+
+- name: Create Kubernetes manifests directory
+  file: 
+    path: /etc/kubernetes/manifests
+    state: directory 
+    mode: 0655
+
+- name: Start kubelet
+  systemd: 
+    name: kubelet
+    state: restarted
+    enabled: yes 
+    daemon_reload: yes
+
+# Kubectl Completion Bash
+- name: Kubectl Completion Bash
+  copy: 
+    src: kubectl.sh
+    dest: /etc/profile.d/

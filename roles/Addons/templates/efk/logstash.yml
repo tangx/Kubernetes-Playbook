@@ -1,0 +1,61 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: logstash
+  namespace: elk
+  labels:
+    app: logstash
+spec:
+  selector:
+    app: logstash
+  ports:
+    - protocol: TCP
+      port: 5043
+      targetPort: 5043
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: logstash
+  namespace: elk
+  labels:
+    app: logstash
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: logstash
+  template:
+    metadata:
+      labels:
+        app: logstash
+    spec:
+      containers:
+        - name: logstash
+          image: daocloud.io/buxiaomo/logstash:6.2.4
+          args: 
+            - "/usr/local/logstash/bin/logstash"
+            - "-f"
+            - "/usr/local/logstash/config/logstash.conf"
+          ports:
+            - containerPort: 5043
+          volumeMounts:
+            - name: logstash
+              mountPath: /usr/local/logstash/config/logstash.conf
+              subPath: logstash.conf
+            - name: logstash-data
+              mountPath: /usr/local/logstash/data
+          resources:
+            limits:
+              cpu: "1"
+              memory: 1024Mi
+            requests:
+              cpu: "1"
+              memory: 1024Mi
+      volumes:
+        - name: logstash
+          configMap:
+            name: logstash
+        - name: logstash-data
+          persistentVolumeClaim:
+            claimName: logstash

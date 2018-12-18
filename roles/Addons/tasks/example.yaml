@@ -1,0 +1,6 @@
+---
+# Example
+- name: Example
+  copy:
+    src: 'lnmp'
+    dest: /usr/local/src/kubernetes

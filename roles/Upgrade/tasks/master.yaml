@@ -1,0 +1,27 @@
+- name: Distribute Kubernetes binary file
+  copy: 
+    src: '/usr/local/bin/{{ item }}'
+    dest: /usr/local/bin/
+    mode: 0744
+    owner: root
+    group: root
+  with_items:
+    - kube-apiserver
+    - kube-controller-manager
+    - kube-proxy
+    - kube-scheduler
+    - kubectl
+    - kubelet
+
+- name: Restart Kubernetes Master service
+  systemd: 
+    name: '{{ item }}'
+    state: restarted
+    enabled: yes 
+    daemon_reload: yes
+  with_items:
+    - kube-controller-manager
+    - kube-scheduler
+    - kube-apiserver
+    - kubelet
+    - kube-proxy

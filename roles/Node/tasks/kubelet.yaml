@@ -1,0 +1,50 @@
+- name: Distribute Kubernetes certificate file
+  copy: 
+    src: '/etc/kubernetes/pki/{{ item }}'
+    dest: /etc/kubernetes/pki/
+    mode: 0644 
+    owner: root
+    group: root
+  with_items:
+    - ca.pem
+    - front-proxy-ca.pem
+
+- name: Create Kubernetes manifests directory
+  file: 
+    path: /etc/kubernetes/manifests
+    state: directory 
+    mode: 0655
+
+- name: Distribute 10-kubelet.conf
+  copy:
+    src: '10-kubelet.conf'
+    dest: /etc/systemd/system/kubelet.service.d/
+    mode: 0644
+
+- name: Distribute kubelet-conf.yml
+  template:
+    src: /etc/kubernetes/{{ item }}
+    dest: /etc/kubernetes/
+    mode: 0644
+  with_items:
+    - bootstrap-kubelet.kubeconfig
+    - kubelet-conf.yml
+
+- name: Distribute Service file
+  copy:
+    src: kubelet.service
+    dest: /etc/systemd/system/
+    mode: 0644
+
+- name: Start kubelet service
+  systemd: 
+    name: kubelet
+    state: restarted
+    enabled: yes 
+    daemon_reload: yes
+
+# Kubectl Completion Bash
+- name: Kubectl Completion Bash
+  copy: 
+    src: kubectl.sh
+    dest: /etc/profile.d/

@@ -1,0 +1,37 @@
+---
+- name: Distribute Kube-Apiserver Configure file step 1
+  copy: 
+    src: /etc/kubernetes/pki/{{ item }}
+    dest: /etc/kubernetes/pki/
+    mode: 0644 
+    owner: root
+    group: root
+  with_items:
+    - sa.key
+    - ca-key.pem
+
+- name: Distribute Kube-Apiserver Configure file step 2
+  copy: 
+    src: /etc/kubernetes/{{ item }}
+    dest: /etc/kubernetes/
+    mode: 0644 
+    owner: root
+    group: root
+  with_items:
+    - controller-manager.kubeconfig
+
+- name: Distribute the service file
+  template: 
+    src: kube-controller-manager.service
+    dest: /etc/systemd/system
+
+- name: Force systemd to reread configs
+  systemd:
+    daemon_reload: yes
+
+- name: Start kube-controller-manager
+  systemd: 
+    name: kube-controller-manager
+    state: restarted
+    enabled: yes 
+    daemon_reload: yes

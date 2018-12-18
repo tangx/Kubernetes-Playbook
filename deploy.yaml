@@ -1,0 +1,58 @@
+---
+# This Playbook Kubernetes
+
+- name: Setup
+  hosts: all
+  roles:
+    - Setup
+  tags:
+    - setup
+
+- name: Load Balancing
+  hosts: slb
+  roles:
+    - SLB
+  tags:
+    - slb
+
+- name: Docker
+  hosts: kubernetes
+  roles:
+    - Docker
+  tags:
+    - docker
+
+- name: IPVS
+  hosts: kubernetes
+  roles:
+    - IPVS
+  tags:
+    - ipvs
+
+- name: Etcd
+  hosts: etcd
+  roles:
+    - Etcd
+  tags:
+    - etcd
+
+- name: Master
+  hosts: master
+  roles:
+    - Master
+  tags:
+    - master
+
+- name: Node
+  hosts: node
+  roles:
+    - Node
+  tags:
+    - node
+
+- name: Addons
+  hosts: kubernetes
+  roles:
+    - Addons
+  tags:
+    - addons

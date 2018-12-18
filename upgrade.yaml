@@ -1,0 +1,8 @@
+---
+# This Playbook Kubernetes
+- name: Master
+  hosts: kubernetes
+  roles:
+    - Upgrade
+  tags:
+    - Upgrade
