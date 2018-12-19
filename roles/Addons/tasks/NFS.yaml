@@ -5,16 +5,16 @@
 - name: Kubernetes Addon NFS stp 1/3
   package:
     name: nfs-common
-  when: NFS == True
 
 - name: Kubernetes Addon NFS stp 2/3
   template:
     src: '{{ item }}'
     dest: /usr/local/src/kubernetes/nfs/
   with_items:
-    - nfs/class.yaml
-    - nfs/deployment.yaml
-    - nfs/rbac.yaml
+    - nfs/1.RBAC.yaml
+    - nfs/2.StorageClass.yaml
+    - nfs/3.ServiceAccount.yaml
+    - nfs/4.Deployment.yaml
 
 - name: Kubernetes Addon NFS stp 3/3
   command: kubectl apply -f /usr/local/src/kubernetes/nfs/
