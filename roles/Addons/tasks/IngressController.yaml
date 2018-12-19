@@ -1,23 +1,18 @@
 
 # Ingress Nginx
-- name: Ingress Controller Nginx step 1/3
+- name: Ingress Controller Nginx step 1/2
   template:
     src: '{{ item }}'
-    dest: /usr/local/src/kubernetes/ingress-nginx/
+    dest: /usr/local/src/kubernetes/ingressnginx/
   with_items:
-    - ingressnginx/ingress-controller-cm.yml
-    - ingressnginx/ingress-controller-rbac.yml
-    - ingressnginx/ingress-controller-sa.yml
-    - ingressnginx/ingress-controller-svc.yml
-    - ingressnginx/ingress-controller.yml
-    - ingressnginx/ingress-controller-ns.yml
+    - ingressnginx/1.Namespace.yaml
+    - ingressnginx/2.RBAC.yaml
+    - ingressnginx/3.ServiceAccount.yaml
+    - ingressnginx/4.ConfigMap.yaml
+    - ingressnginx/5.Service.yaml
+    - ingressnginx/6.Deployment.yaml
 
-- name: Ingress Controller Nginx step 2/3
-  command: kubectl apply -f /usr/local/src/kubernetes/ingress-nginx/ingress-controller-ns.yml
-  when: IngressController == "nginx"
-  run_once: true
-
-- name: Ingress Controller Nginx step 3/3
+- name: Ingress Controller Nginx step 2/2
   command: kubectl apply -f /usr/local/src/kubernetes/ingress-nginx
   run_once: true
   when: IngressController == "nginx"
