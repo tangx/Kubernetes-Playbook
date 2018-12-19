@@ -19,7 +19,7 @@ metadata:
   namespace: ingress
 spec:
   rules:
-  - host: traefik-ui.k8s.lo
+  - host: traefik-ui.kubernetes.local
     http:
       paths:
       - path: /

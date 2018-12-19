@@ -15,18 +15,18 @@ spec:
       protocol: TCP
   selector:
     k8s-app: kubernetes-dashboard
----
-apiVersion: extensions/v1beta1
-kind: Ingress
-metadata:
-  name: dashboard-web-ui
-  namespace: kube-system
-spec:
-  rules:
-  - host: dashboard.minikube
-    https:
-      paths:
-      - path: /
-        backend:
-          serviceName: kubernetes-dashboard
-          servicePort: dashboard-tls
+# ---
+# apiVersion: extensions/v1beta1
+# kind: Ingress
+# metadata:
+#   name: dashboard-web-ui
+#   namespace: kube-system
+# spec:
+#   rules:
+#   - host: dashboard.kubernetes.local
+#     http:
+#       paths:
+#       - path: /
+#         backend:
+#           serviceName: kubernetes-dashboard
+#           servicePort: dashboard-tls
