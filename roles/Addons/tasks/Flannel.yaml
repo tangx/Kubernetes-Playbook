@@ -8,10 +8,15 @@
 
 - name: Create flannel step 2/3
   template:
-    src: 'flannel/kube-flannel.yml'
-    dest: /usr/local/src/kubernetes/flannel/kube-flannel.yml
+    src: '{{ item }}'
+    dest: /usr/local/src/kubernetes/flannel
+  with_items:
+    - flannel/1.RBAC.yml
+    - flannel/2.ConfigMap.yaml
+    - flannel/3.ServiceAccount.yaml
+    - flannel/4.DaemonSet.yaml
 
 - name: Create flannel step 3/3
-  command: "kubectl apply -f /usr/local/src/kubernetes/flannel/kube-flannel.yml"
+  command: "kubectl apply -f /usr/local/src/kubernetes/flannel"
   run_once: true
   when: Network == "flannel"
