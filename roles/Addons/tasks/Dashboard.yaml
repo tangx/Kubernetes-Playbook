@@ -5,8 +5,11 @@
     src: '{{ item }}'
     dest: /usr/local/src/kubernetes/Dashboard/
   with_items:
-    - dashboard/anonymous-proxy-rbac.yml
-    - dashboard/kubernetes-dashboard.yml
+    - dashboard/1.RBAC.yml
+    - dashboard/2.Secret.yaml
+    - dashboard/3.ServiceAccount.yaml
+    - dashboard/4.Service.yaml
+    - dashboard/5.Deployment.yaml
 
 - name: Dashboard step 2/2
   command: kubectl apply -f /usr/local/src/kubernetes/Dashboard
