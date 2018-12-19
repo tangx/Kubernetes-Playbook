@@ -13,7 +13,7 @@
 - name: Weave Scope step 3/4
   template:
     src: WeaveScope/WeaveScope.yaml
-    dest: /usr/local/src/kubernetes/WeaveScope
+    dest: /usr/local/src/kubernetes/WeaveScope/WeaveScope.yaml
 
 - name: Weave Scope step 4/4
   command: kubectl apply -f /usr/local/src/kubernetes/WeaveScope
