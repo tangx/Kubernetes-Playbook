@@ -29,7 +29,13 @@
     - Traefik/5.Service.yaml
     - Traefik/6.Ingress.yaml
 
-- name: Ingress Controller Traefik step 2/2
+- name: Ingress Controller Traefik step 2/3
+  file: 
+    path: /var/log/traefik
+    state: directory 
+    mode: 0755
+
+- name: Ingress Controller Traefik step 3/3
   command: kubectl apply -f /usr/local/src/kubernetes/Traefik/
   run_once: true
   when: IngressController == "traefik"
