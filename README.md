@@ -103,4 +103,3 @@ journalctl -fu kube-controller-manager
 journalctl -fu kube-scheduler
 journalctl -fu kube-proxy
 ```
-

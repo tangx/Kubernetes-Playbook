@@ -19,7 +19,7 @@ metadata:
   namespace: ingress
 spec:
   rules:
-  - host: traefik-ui.minikube
+  - host: traefik-ui.k8s.lo
     http:
       paths:
       - path: /

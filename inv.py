@@ -52,7 +52,7 @@ if __name__ == "__main__":
         "VIP": "192.168.122.5", # 配置Kubernetes ApiServer VIP地址，默认值：N/A（必填项）
         # "Port": "6443", # 配置Kubernetes ApiServer VIP端口，默认值：6443，若Haporxy在Master节点，请设置为8443，防止端口冲突
         "VIPMask": "16", # 配置Kubernetes ApiServer VIP地址掩码，默认值：24
-        # "KUBE_APISERVER": "https://192.168.122.5:6443", # 配置Kubernetes ApiServer 调用地址，默认值：https://VIP:6443
+        # "KUBE_APISERVER": "https://192.168.122.5:6443", # 配置Kubernetes ApiServer 调用地址，默认值：https://VIP:Port
         "ClusterIPCIDR": "10.244.0.0/16", # 默认值：10.244.0.0/16
         "ServiceClusterIPCIDR": "10.96.0.0/12", # 默认值：10.96.0.0/12
         "ServiceDNSIP": "10.96.0.10", # 默认值：10.96.0.10
