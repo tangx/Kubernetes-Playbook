@@ -13,7 +13,7 @@
     - ingressnginx/6.Deployment.yaml
 
 - name: Ingress Controller Nginx step 2/2
-  command: kubectl apply -f /usr/local/src/kubernetes/ingress-nginx
+  command: kubectl apply -f /usr/local/src/kubernetes/ingressnginx
   run_once: true
   when: IngressController == "nginx"
 
