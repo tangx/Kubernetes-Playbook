@@ -1,0 +1,14 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: jenkins
+  namespace: devops
+spec:
+  rules:
+  - host: jenkins.kubernetes.local
+    http:
+      paths:
+        - path: /
+          backend:
+            serviceName: jenkins
+            servicePort: 8080
