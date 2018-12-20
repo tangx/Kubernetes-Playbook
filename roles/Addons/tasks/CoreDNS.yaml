@@ -2,10 +2,16 @@
 # CoreDNS
 - name: Create CoreDNS step 1/2
   template: 
-    src: coredns/coredns.yml
+    src: '{{ item }}'
     dest: /usr/local/src/kubernetes/coredns/
+  with_items:
+    - coredns/1.ServiceAccount.yaml
+    - coredns/2.RBAC.yaml
+    - coredns/3.ConfigMap.yaml
+    - coredns/4.Deployment.yaml
+    - coredns/5.Service.yaml
 
 - name: Create CoreDNS step 2/2
-  command: "kubectl apply -f /usr/local/src/kubernetes/coredns/coredns.yml"
+  command: "kubectl apply -f /usr/local/src/kubernetes/coredns/"
   run_once: true
   when: DNS == "coredns"
