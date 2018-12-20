@@ -6,6 +6,12 @@
 
 * [ ] CentOS 7.*
 
+## 云服务商
+
+* [x] QingCloud
+
+* [ ] AliYun
+
 ## 各组件版本
 
 | 组件 | 版本 |
@@ -31,6 +37,7 @@
 ## 部署集群
 
 ```
+docker pull daocloud.io/buxiaomo/k8splaybook:v1.13.0
 docker run -it --rm --name k8splaybook \
 -v kubernetes:/etc/kubernetes:rw \
 -v etcd:/etc/etcd/ssl:rw \
@@ -103,3 +110,18 @@ journalctl -fu kube-controller-manager
 journalctl -fu kube-scheduler
 journalctl -fu kube-proxy
 ```
+
+## 主机污点
+```
+# 增加
+kubectl taint node master01 node-role.kubernetes.io/master="":NoSchedule
+kubectl taint node master02 node-role.kubernetes.io/master="":NoSchedule
+kubectl taint node master03 node-role.kubernetes.io/master="":NoSchedule
+
+# 去除
+kubectl taint node master01 node-role.kubernetes.io/master:NoSchedule-
+kubectl taint node master02 node-role.kubernetes.io/master:NoSchedule-
+kubectl taint node master03 node-role.kubernetes.io/master:NoSchedule-
+```
+kubectl delete -f 4.MySQL.yaml -f 6.PHP.yaml -f 5.Nginx.yaml -f 7.Redis.yaml
+kubectl apply -f 4.MySQL.yaml -f 6.PHP.yaml -f 5.Nginx.yaml -f 7.Redis.yaml

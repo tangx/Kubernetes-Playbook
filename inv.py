@@ -58,7 +58,7 @@ if __name__ == "__main__":
         "ServiceDNSIP": "10.96.0.10", # 默认值：10.96.0.10
         "Network": "flannel", # 网络组件，可选值：calico、flannel，默认值：flannel
         "Interface": "ens3",  # 网络组建依赖的网卡
-        "DNS": "kube-dns",  # 集群DNS类型，可选值：coredns、kube-dns，默认值：coredns
+        "DNS": "coredns",  # 集群DNS类型，可选值：coredns、kube-dns，默认值：coredns
         "Dashboard": False, # 是否安装 Dashboard，默认值：False
         "MetricsServer": True, # 是否安装Metrics Server，默认值：False
         "HelmTiller": False, # 是否安装 Helm，默认值：False
