@@ -35,11 +35,11 @@ spec:
             - containerPort: 9000
           resources:
             limits:
-              cpu: "1"
-              memory: 1024Mi
+              cpu: "0.1"
+              memory: 512Mi
             requests:
-              cpu: "1"
-              memory: 1024Mi
+              cpu: "0.1"
+              memory: 512Mi
           readinessProbe:
             tcpSocket:
               port: 9000

@@ -5,7 +5,7 @@ metadata:
   namespace: lnmp
 spec:
   rules:
-  - host: www.splunk.org.cn
+  - host: lnmp.kubernetes.local
     http:
       paths:
         - path: /
