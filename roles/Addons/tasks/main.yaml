@@ -45,6 +45,10 @@
 - name: Kubernetes Addon EFK
   include_tasks: EFK.yaml
 
+# Registry
+- name: Kubernetes Addon Registry
+  include_tasks: Registry.yaml
+
 # Example
 - name: Kubernetes Example
   include_tasks: example.yaml

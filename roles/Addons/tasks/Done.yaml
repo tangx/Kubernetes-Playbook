@@ -5,7 +5,7 @@
 
 - name: Kube-ApiServer IP Address
   debug:
-    msg: {{ KUBE_APISERVER }}
+    msg: "{{ KUBE_APISERVER }}" 
   run_once: true
 
 - name: Kubernetes Traefik-UI URL

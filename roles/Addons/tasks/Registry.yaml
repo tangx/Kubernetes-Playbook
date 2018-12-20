@@ -1,0 +1,18 @@
+---
+# This Playbook Install Kubernetes Addon
+# Registry
+- name: Kubernetes Addon Registry stp 1/2
+  template:
+    src: '{{ item }}'
+    dest: /usr/local/src/kubernetes/registry/
+  with_items:
+    - registry/1.Namespace.yaml
+    - registry/2.PersistentVolumeClaim.yaml
+    - registry/4.Redis.yaml
+    - registry/5.Registry.yaml
+    - registry/6.Ingress.yaml
+
+- name: Kubernetes Addon Registry stp 2/2
+  command: kubectl apply -f /usr/local/src/kubernetes/registry/
+  run_once: true
+  when: Registry == True
