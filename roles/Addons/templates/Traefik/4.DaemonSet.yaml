@@ -55,3 +55,4 @@ spec:
         - name: log
           hostPath:
             path: /var/log/traefik
+            type: DirectoryOrCreate
