@@ -4,10 +4,10 @@ metadata:
   name: redis
   namespace: registry
   labels:
-    app: redis
+    k8s-app: redis
 spec:
   selector:
-    app: redis
+    k8s-app: redis
   ports:
     - protocol: TCP
       port: 6379
@@ -20,16 +20,16 @@ metadata:
   name: redis
   namespace: registry
   labels:
-    app: redis
+    k8s-app: redis
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: redis
+      k8s-app: redis
   template:
     metadata:
       labels:
-        app: redis
+        k8s-app: redis
     spec:
       containers:
         - name: redis

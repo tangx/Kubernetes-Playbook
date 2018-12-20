@@ -18,17 +18,8 @@ data:
         environment: staging
     loglevel: debug
     storage:
-      s3:
-        accesskey: L20DDBWNE99GPXPAHMEL
-        secretkey: JecN82POlqdLzyJ9Yk4VE0kdrgqLH1KJioZCxGHD
-        region: us-east-1
-        regionendpoint: http://minio:9000/
-        bucket: registry
-        encrypt: false
-        secure: true
-        v4auth: true
-        chunksize: 5242880
-        rootdirectory: /
+      filesystem:
+        rootdirectory: /var/lib/registry
       delete:
         enabled: true
       redirect:
