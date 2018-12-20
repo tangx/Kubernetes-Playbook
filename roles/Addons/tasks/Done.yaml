@@ -1,0 +1,27 @@
+- name: Check Etcd Command
+  debug:
+    msg: etcdctl --endpoints {% for host in groups['etcd'] %}https://{{ host }}:2379{% if not loop.last %},{% endif %}{% endfor %} --ca-file=/etc/etcd/ssl/etcd-ca.pem --cert-file=/etc/etcd/ssl/etcd.pem  --key-file=/etc/etcd/ssl/etcd-key.pem cluster-health
+  run_once: true
+
+- name: Kube-ApiServer IP Address
+  debug:
+    msg: https://{{ KUBE_APISERVER }}
+  run_once: true
+
+- name: Kubernetes Traefik-UI URL
+  debug:
+    msg: http://traefik-ui.kubernetes.local
+  run_once: true
+  when: IngressController == "traefik"
+
+- name: Kubernetes Dashboard URL
+  debug:
+    msg: https://dashboard.kubernetes.local
+  run_once: true
+  when: Dashboard == True
+
+- name: Kubernetes Dashboard Access Token
+  debug:
+    msg: Run command on Master "kubectl -n kube-system describe secrets | sed -rn '/\sdashboard-token-/,/^token/{/^token/s#\S+\s+##p}'"
+  run_once: true
+  when: Dashboard == True

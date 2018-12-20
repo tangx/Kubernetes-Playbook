@@ -49,20 +49,6 @@
 - name: Kubernetes Example
   include_tasks: example.yaml
 
-# - name: Create a kubernetes namespace
-#   kubernetes:
-#     api_endpoint: 123.45.67.89
-#     url_username: admin
-#     url_password: redacted
-#     inline_data:
-#       kind: Namespace
-#       apiVersion: v1
-#       metadata:
-#         name: ansible-test
-#         labels:
-#           label_env: production
-#           label_ver: latest
-#         annotations:
-#           a1: value1
-#           a2: value2
-#     state: present
+# Done
+- name: Kubernetes Cluster Information
+  include_tasks: Done.yaml

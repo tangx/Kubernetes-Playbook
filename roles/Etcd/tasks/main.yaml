@@ -60,8 +60,3 @@
       delay: 15
       state: started
       host: '{{ ansible_ssh_host }}'
-
-  - name: Check Etcd Command
-    debug:
-      msg: etcdctl --endpoints {% for host in groups['etcd'] %}https://{{ host }}:2379{% if not loop.last %},{% endif %}{% endfor %} --ca-file=/etc/etcd/ssl/etcd-ca.pem --cert-file=/etc/etcd/ssl/etcd.pem  --key-file=/etc/etcd/ssl/etcd-key.pem cluster-health
-    run_once: true
