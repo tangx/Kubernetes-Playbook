@@ -5,7 +5,7 @@
 
 - name: Kube-ApiServer IP Address
   debug:
-    msg: https://{{ KUBE_APISERVER }}
+    msg: {{ KUBE_APISERVER }}
   run_once: true
 
 - name: Kubernetes Traefik-UI URL
@@ -22,6 +22,6 @@
 
 - name: Kubernetes Dashboard Access Token
   debug:
-    msg: Run command on Master "kubectl -n kube-system describe secrets | sed -rn '/\sdashboard-token-/,/^token/{/^token/s#\S+\s+##p}'"
+    msg: Run command on Master 'kubectl -n kube-system describe secrets | sed -rn "/\sdashboard-token-/,/^token/{/^token/s#\S+\s+##p}"'
   run_once: true
   when: Dashboard == True
