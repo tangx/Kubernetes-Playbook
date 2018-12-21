@@ -1,4 +1,3 @@
-
 # Ingress Nginx
 - name: Ingress Controller Nginx step 1/2
   template:

@@ -38,6 +38,7 @@
 
 ## 使用
 ### 1. 前提条件
+
 1. slb主机系统版本保持一致 
 
 2. kubernetes主机系统保持一致，要么Ubuntu要么CentOS，不支持混搭
@@ -45,6 +46,7 @@
 3. 请不要在集群节点运行本容器，因为中途会重启docker组件导致部署中断
 
 ### 2. 设置资产信息
+
 请参考本项目 `inv.py` 文件配置
 
 ### 3. 部署集群
@@ -108,6 +110,7 @@ etcdctl --endpoints "https://10.0.100.11:2379,https://10.0.100.12:2379,https://1
 ```
 
 ## Kubernetes Dashboard Token
+
 ```
 kubectl -n kube-system describe secrets | sed -rn '/\sdashboard-token-/,/^token/{/^token/s#\S+\s+##p}'
 ```
@@ -129,6 +132,7 @@ journalctl -fu kube-proxy
 ```
 
 ## 主机污点
+
 ```
 # 增加
 kubectl taint node master01 node-role.kubernetes.io/master="":NoSchedule
