@@ -8,6 +8,7 @@
   with_items:
     - registry/1.Namespace.yaml
     - registry/2.PersistentVolumeClaim.yaml
+    - registry/3.ConfigMap.yaml
     - registry/4.Redis.yaml
     - registry/5.Registry.yaml
     - registry/6.Ingress.yaml
