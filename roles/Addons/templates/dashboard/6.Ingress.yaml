@@ -5,10 +5,10 @@ metadata:
   namespace: kube-system
 spec:
   rules:
-  - host: dashboard.kubernetes.local
-    http:
-      paths:
-      - path: /
-        backend:
-          serviceName: kubernetes-dashboard
-          servicePort: dashboard-tls
+    - host: dashboard.kubernetes.local
+      http:
+        paths:
+          - path: /
+            backend:
+              serviceName: kubernetes-dashboard
+              servicePort: dashboard-tls
