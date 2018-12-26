@@ -9,3 +9,4 @@
     - conntrack
     - sysstat
     - iptables
+    - jq
