@@ -4,7 +4,6 @@
 - include_tasks: haproxy.yaml
   when: slb == "haproxy"
 
-
 - include_tasks: nginx.yaml
   when: slb == "nginx"
 
