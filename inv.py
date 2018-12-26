@@ -39,7 +39,8 @@ if __name__ == "__main__":
         group,
         {
             "username": "admin",
-            "password": "admin"
+            "password": "admin",
+            "slb": "nginx"
         }
     )
 

@@ -1,0 +1,24 @@
+---
+- name: Add apt key
+  apt_key:
+    url: https://nginx.org/keys/nginx_signing.key
+    state: present
+
+- name: Add Nginx Repository
+  apt_repository:
+    repo: ppa:nginx/stable
+
+- name: Install Nginx
+  apt:
+    name: nginx
+    update_cache: yes
+
+- name: Configure Nginx
+  template:
+    src: nginx.conf
+    dest: /etc/nginx/nginx.conf
+
+- name: Start Nginx
+  apt:
+    name: nginx
+    update_cache: yes
