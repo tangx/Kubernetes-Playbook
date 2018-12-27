@@ -2,7 +2,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: nginx
-  namespace: lnmp
+  # namespace: lnmp
   annotations:
     external-dns.alpha.kubernetes.io/hostname: wp.k8s.local
 spec:
@@ -18,7 +18,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: nginx
-  namespace: lnmp
+  # namespace: lnmp
   labels:
     k8s-app: nginx
 spec:

@@ -2,7 +2,7 @@ apiVersion: autoscaling/v1
 kind: HorizontalPodAutoscaler
 metadata:
   name: nginx
-  namespace: lnmp
+  # namespace: lnmp
 spec:
   maxReplicas: 10
   minReplicas: 1
@@ -20,7 +20,7 @@ apiVersion: autoscaling/v1
 kind: HorizontalPodAutoscaler
 metadata:
   name: php
-  namespace: lnmp
+  # namespace: lnmp
 spec:
   maxReplicas: 10
   minReplicas: 1

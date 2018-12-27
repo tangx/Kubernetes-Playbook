@@ -2,7 +2,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: mysql
-  namespace: lnmp
+  # namespace: lnmp
 data:
   mysqld.cnf: |
     [client]
@@ -103,7 +103,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: nginx
-  namespace: lnmp
+  # namespace: lnmp
 data:
   nginx.conf: |
     user  nginx nginx;
@@ -204,7 +204,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: php
-  namespace: lnmp
+  # namespace: lnmp
 data:
   php.ini: |
     [PHP]
@@ -358,7 +358,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: php-fpm
-  namespace: lnmp
+  # namespace: lnmp
 data:
   www.conf: |
     [www]

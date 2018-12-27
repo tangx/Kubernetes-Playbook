@@ -2,7 +2,7 @@ kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
   name: mysql
-  namespace: lnmp
+  # namespace: lnmp
   annotations:
     volume.beta.kubernetes.io/storage-class: "managed-nfs-storage"
 spec:
@@ -17,7 +17,7 @@ kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
   name: www
-  namespace: lnmp
+  # namespace: lnmp
   annotations:
     volume.beta.kubernetes.io/storage-class: "managed-nfs-storage"
 spec:

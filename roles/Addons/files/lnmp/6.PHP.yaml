@@ -2,7 +2,7 @@ kind: Service
 apiVersion: v1
 metadata:
   name: php
-  namespace: lnmp
+  # namespace: lnmp
 spec:
   selector:
     k8s-app: php
@@ -15,7 +15,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: php
-  namespace: lnmp
+  # namespace: lnmp
   labels:
     k8s-app: php
 spec:

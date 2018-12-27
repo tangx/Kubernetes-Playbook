@@ -2,7 +2,7 @@ kind: Service
 apiVersion: v1
 metadata:
   name: mysql
-  namespace: lnmp
+  # namespace: lnmp
 spec:
   selector:
     k8s-app: mysql
@@ -15,7 +15,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: mysql
-  namespace: lnmp
+  # namespace: lnmp
   labels:
     k8s-app: mysql
 spec:
@@ -32,7 +32,8 @@ spec:
         - name: mysql
           image: mysql:5.7.20
           ports:
-            - containerPort: 3306
+            - name: data
+              containerPort: 3306
           resources:
             limits:
               cpu: "1"
@@ -42,12 +43,12 @@ spec:
               memory: 1024Mi
           readinessProbe:
             tcpSocket:
-              port: 3306
+              port: data
             initialDelaySeconds: 5
             periodSeconds: 10
           livenessProbe:
             tcpSocket:
-              port: 3306
+              port: data
             initialDelaySeconds: 15
             periodSeconds: 20
           env:
