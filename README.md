@@ -56,9 +56,9 @@ docker pull daocloud.io/buxiaomo/k8splaybook:v1.13.0
 docker run -it --rm --name k8splaybook \
 -v kubernetes:/etc/kubernetes:rw \
 -v etcd:/etc/etcd/ssl:rw \
--v /root/.ssh/id_rsa:/root/.ssh/id_rsa \
--v /root/.ssh/id_rsa.pub:/root/.ssh/id_rsa.pub \
--v /root/inv.py:/playbook/inv.py \
+-v $HOME/.ssh/id_rsa:/root/.ssh/id_rsa \
+-v $HOME/.ssh/id_rsa.pub:/root/.ssh/id_rsa.pub \
+-v $HOME/inv.py:/playbook/inv.py \
 daocloud.io/buxiaomo/k8splaybook:v1.13.0
 ```
 

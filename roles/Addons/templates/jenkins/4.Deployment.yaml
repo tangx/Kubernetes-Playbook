@@ -15,6 +15,10 @@ spec:
       labels:
         k8s-app: jenkins
     spec:
+      hostAliases:
+        - ip: 192.168.122.21
+          hostnames: 
+            - hub.kubernetes.local
       containers:
         - name: jenkins
           image: daocloud.io/buxiaomo/jenkins:2.150.1
@@ -30,6 +34,8 @@ spec:
           volumeMounts:
             - name: jenkins
               mountPath: /var/jenkins
+            - name: docker
+              mountPath: /var/run/docker.sock
           readinessProbe:
             tcpSocket:
               port: 8080
@@ -44,3 +50,6 @@ spec:
         - name: jenkins
           persistentVolumeClaim:
             claimName: jenkins
+        - name: docker
+          hostPath:
+            path: /var/run/docker.sock
