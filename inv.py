@@ -71,6 +71,7 @@ if __name__ == "__main__":
         "IngressControllerNginxVIP": "192.168.122.9", # Ingress Nginx使用的VIP，若IngressNginx参数为True，需要设置该变量值
         "NFS": False, # 是否集成NFS，该功能不安装NFS，请自行安装
         "NFS_SERVER": "192.168.122.8" # NFS服务器地址，若NFS参数为True，需要设置该变量值
+        "NFS_DIR": "/mnt/kubernetes" # NFS共享目录，若NFS参数为True，需要设置该变量值
     })
 
     inv.GetJson()

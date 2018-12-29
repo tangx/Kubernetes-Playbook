@@ -24,9 +24,9 @@ spec:
             - name: NFS_SERVER
               value: {{ NFS_SERVER }}
             - name: NFS_PATH
-              value: /mnt/k8s
+              value: {{ NFS_DIR }}
       volumes:
         - name: nfs-client-root
           nfs:
             server: {{ NFS_SERVER }}
-            path: /mnt/k8s
+            path: {{ NFS_DIR }}

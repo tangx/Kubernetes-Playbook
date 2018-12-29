@@ -16,7 +16,7 @@
   run_once: true
   when: IngressController == "nginx"
 
-- name: Ingress Controller Traefik step 1/2
+- name: Ingress Controller Traefik step 1/5
   template:
     src: '{{ item }}'
     dest: /usr/local/src/kubernetes/Traefik/
@@ -28,7 +28,23 @@
     - Traefik/5.Service.yaml
     - Traefik/6.Ingress.yaml
 
-- name: Ingress Controller Traefik step 2/2
+- name: Ingress Controller Traefik step 2/5
+  package:
+    name: keepalived
+
+- name: Ingress Controller Traefik step 3/5
+  template:
+    src: Traefik/keepalived.conf
+    dest: /etc/keepalived/keepalived.conf
+
+- name: Ingress Controller Traefik step 4/5
+  systemd:
+    name: keepalived
+    enabled: yes
+    state: restarted
+  when: IngressController == "traefik"
+
+- name: Ingress Controller Traefik step 5/5
   command: kubectl apply -f /usr/local/src/kubernetes/Traefik/
   run_once: true
   when: IngressController == "traefik"
