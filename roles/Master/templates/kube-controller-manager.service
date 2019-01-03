@@ -22,7 +22,7 @@ ExecStart=/usr/local/bin/kube-controller-manager \
       --allocate-node-cidrs=true \
       --cluster-cidr={{ ClusterIPCIDR }} \
       --node-cidr-mask-size=24 \
-      --horizontal-pod-autoscaler-sync-period=3s
+      --horizontal-pod-autoscaler-sync-period=30s
 
 Restart=always
 RestartSec=10s
