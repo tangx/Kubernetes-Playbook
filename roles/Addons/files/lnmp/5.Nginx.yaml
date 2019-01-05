@@ -49,6 +49,8 @@ spec:
               subPath: nginx.conf
             - name: www
               mountPath: /var/www/html
+            - name: zoneinfo
+              mountPath: /etc/localtime
           livenessProbe:
             httpGet:
               path: /healthz
@@ -65,6 +67,9 @@ spec:
         - name: nginx
           configMap:
             name: nginx
+        - name: zoneinfo
+          hostPath:
+            path: /usr/share/zoneinfo/Asia/Shanghai
         - name: www
           persistentVolumeClaim:
             claimName: www

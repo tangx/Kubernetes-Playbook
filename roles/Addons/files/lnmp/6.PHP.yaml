@@ -59,6 +59,8 @@ spec:
               subPath: www.conf
             - name: www
               mountPath: /var/www/html
+            - name: zoneinfo
+              mountPath: /etc/localtime
       volumes:
         - name: php
           configMap:
@@ -69,3 +71,6 @@ spec:
         - name: www
           persistentVolumeClaim:
             claimName: www
+        - name: zoneinfo
+          hostPath:
+            path: /usr/share/zoneinfo/Asia/Shanghai

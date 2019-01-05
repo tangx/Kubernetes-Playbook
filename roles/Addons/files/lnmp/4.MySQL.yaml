@@ -23,6 +23,8 @@ spec:
   selector:
     matchLabels:
       k8s-app: mysql
+  strategy:
+    type: Recreate
   template:
     metadata:
       labels:
@@ -60,6 +62,8 @@ spec:
               subPath: mysqld.cnf
             - name: mysql
               mountPath: "/var/lib/mysql"
+            - name: zoneinfo
+              mountPath: /etc/localtime
       volumes:
         - name: mysqld
           configMap:
@@ -67,3 +71,6 @@ spec:
         - name: mysql
           persistentVolumeClaim:
             claimName: mysql
+        - name: zoneinfo
+          hostPath:
+            path: /usr/share/zoneinfo/Asia/Shanghai
